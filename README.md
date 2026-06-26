@@ -1,5 +1,10 @@
 # TCK tests for all JSR107 implementations
 
+
+> [!CAUTION]
+> This repository has been archived as of June 2026.  
+> If you wish to update or extend this project, please create a fork.
+
 This project uses the maven test runner to execute JSR107 TCK tests for available open source cache implementations. These are:
 
   * JCache RI
